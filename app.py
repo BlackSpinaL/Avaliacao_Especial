@@ -36,6 +36,8 @@ if matricula in matriculas_autorizadas:
 
         if disciplinas:
             df_long = pd.concat(disciplinas)
+            # Remove duplicatas de solicitações do mesmo aluno na mesma disciplina e tipo
+            df_long = df_long.drop_duplicates(subset=["Matrícula", "Disciplina", "Tipo"])
         else:
             st.error(f"Colunas encontradas: {df.columns.tolist()}")
             st.stop()
