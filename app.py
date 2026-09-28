@@ -1,9 +1,9 @@
 import streamlit as st
 import pandas as pd
 
-st.set_page_config(page_title="Sistema de Cálculos", layout="wide")
+st.set_page_config(page_title="Avaliação Especial", layout="wide")
 
-st.title("🔒 Sistema de Cálculos - Acesso Restrito")
+st.title("🔒 Cálculo de Solicitações de Avaliação Especial - Acesso Restrito")
 
 # Lista de matrículas autorizadas
 matriculas_autorizadas = ["1547215", "1610344", "1674159"]
