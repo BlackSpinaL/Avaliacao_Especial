@@ -1,7 +1,5 @@
 import streamlit as st
 import pandas as pd
-import io
-import os
 
 st.set_page_config(page_title="Avaliação Especial", layout="wide")
 
@@ -16,66 +14,7 @@ matricula = st.text_input("Digite sua matrícula para acessar:")
 if matricula in matriculas_autorizadas:
     st.success("Acesso liberado!")
 
-    # ============================================================
-    # TUTORIAL DE UPLOAD (Baseado no modelo enviado)
-    # ============================================================
-    st.header("1️⃣ Tutorial de Envio da Planilha")
-    st.caption("Fluxo: 1️⃣ faça login ➔ 2️⃣ envie a planilha ➔ 3️⃣ selecione os filtros ➔ 4️⃣ visualize os resultados.")
-
-    st.warning(
-        "⚠️ **ATENÇÃO** — A planilha deve conter **SOMENTE** as colunas do modelo abaixo. "
-        "Colunas extras (filtros, observações, notas antigas, etc.) podem atrapalhar o processamento."
-    )
-
-    col1, col2 = st.columns([1.5, 1])
-
-    with col1:
-        st.markdown("**Modelo correto (exemplo):**")
-        
-        # Criando um DataFrame de exemplo visual para o usuário
-        dados_exemplo = [
-            ["000000", "AAAAA AAAAA AAAAA", "12101", "ENSINO MÉDIO", 2026, 1, "021 - BIOLOGIA", "RECUPERACAO", "027 - QUIMICA", "RECUPERACAO", "026 - FISICA", "RECUPERACAO", "017 - MATEMATICA", "RECUPERACAO"],
-            ["111111", "BBBBB BBBBB BBBBB", "12102", "ENSINO MÉDIO", 2026, 1, "021 - BIOLOGIA", "RECUPERACAO", "009 - GEOGRAFIA", "RECUPERACAO", "", "", "", ""]
-        ]
-        colunas_exemplo = [
-            "Matrícula", "Nome do Aluno", "Código Turma", "Curso", "Ano Letivo", "Etapa", 
-            "1ª Disciplina", "Motivo", "2ª Disciplina", "Motivo", "3ª Disciplina", "Motivo", "4ª Disciplina", "Motivo"
-        ]
-        exemplo_df = pd.DataFrame(dados_exemplo, columns=colunas_exemplo)
-        st.dataframe(exemplo_df, use_container_width=True)
-
-        # Botão para baixar a planilha modelo em branco
-        buffer = io.BytesIO()
-        with pd.ExcelWriter(buffer, engine='openpyxl') as writer:
-            template_df = pd.DataFrame(columns=colunas_exemplo)
-            template_df.to_excel(writer, index=False)
-        
-        st.download_button(
-            label="📥 Baixar planilha-modelo (.xlsx)",
-            data=buffer.getvalue(),
-            file_name="modelo_avaliacao_especial.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
-
-    with col2:
-        st.markdown("**Colunas obrigatórias:**")
-        st.markdown(
-            "- `Matrícula`\n"
-            "- `Nome do Aluno`\n"
-            "- `Código Turma`\n"
-            "- `Curso`\n"
-            "- `Ano Letivo`\n"
-            "- `Etapa`\n"
-            "- Pelo menos uma coluna de disciplina (`1ª Disciplina`, `2ª Disciplina`, ...) e seu respectivo `Motivo`"
-        )
-        st.markdown("**Formato da disciplina:** `código - NOME` (ex.: `017 - MATEMATICA`)")
-        st.markdown("Remova da planilha qualquer coluna que não esteja no modelo — inclusive filtros e colunas em branco no final.")
-
-    st.divider()
-    # ============================================================
-
-    st.subheader("Envie o arquivo Excel com as solicitações")
-    uploaded_file = st.file_uploader("Faça o upload da planilha", type=["xlsx"])
+    uploaded_file = st.file_uploader("Envie o arquivo de solicitações (Excel)", type=["xlsx"])
 
     if uploaded_file:
         df = pd.read_excel(uploaded_file)
