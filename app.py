@@ -5,6 +5,18 @@ st.set_page_config(page_title="Avaliação Especial", layout="wide")
 
 st.title("🔒 Cálculo de Solicitações de Avaliação Especial - Acesso Restrito")
 
+# ✅ Instruções exibidas antes do upload
+st.markdown(
+    """
+    ### 📋 Instruções antes de enviar a planilha
+    1. **Retirar as 2 primeiras linhas** da planilha;
+    2. **Descongelar as linhas** (caso estejam congeladas);
+    3. **Salvar e enviar** o arquivo no campo abaixo.
+    """
+)
+
+st.divider()  # opcional: linha divisória para separar visualmente
+
 # Lista de matrículas autorizadas
 matriculas_autorizadas = ["1547215", "1610344", "1674159"]
 
@@ -36,13 +48,11 @@ if matricula in matriculas_autorizadas:
 
         if disciplinas:
             df_long = pd.concat(disciplinas)
-            # Remove duplicatas de solicitações do mesmo aluno na mesma disciplina e tipo
             df_long = df_long.drop_duplicates(subset=["Matrícula", "Disciplina", "Tipo"])
         else:
             st.error(f"Colunas encontradas: {df.columns.tolist()}")
             st.stop()
 
-        # Filtros com opções ordenadas
         col1, col2, col3 = st.columns(3)
         with col1:
             turmas = st.multiselect(
@@ -65,7 +75,6 @@ if matricula in matriculas_autorizadas:
         if tipo != "Todos":
             filtrado = filtrado[filtrado["Tipo"] == tipo]
 
-        # Consolidar em uma linha por disciplina
         resultado = filtrado.pivot_table(
             index="Disciplina",
             columns="Tipo",
@@ -74,16 +83,12 @@ if matricula in matriculas_autorizadas:
             fill_value=0
         ).reset_index()
 
-        # Adicionar coluna de total geral por disciplina
         resultado["Total Geral"] = resultado.sum(axis=1, numeric_only=True)
 
-        # Totais por situação
         totais_situacao = filtrado.groupby("Tipo").size().reset_index(name="Total")
 
-        # Total geral
         total_geral = filtrado.shape[0]
 
-        # Mostrar resultados com cabeçalhos centralizados
         st.subheader("Resultados filtrados")
         st.dataframe(resultado.style.set_table_styles(
             [{'selector': 'th', 'props': [('text-align', 'center')]}]
@@ -103,5 +108,5 @@ if matricula in matriculas_autorizadas:
             st.info("Nenhum dado encontrado para os filtros selecionados.")
 
 else:
-    if matricula:  # só mostra erro se o usuário digitou algo
+    if matricula:
         st.error("Matrícula não autorizada. Contate o administrador.")
